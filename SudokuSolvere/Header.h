@@ -1,11 +1,21 @@
 #pragma once
 
+#include <iostream>
+#include<vector>
+
 #define n 9
+
+typedef std::vector<cell> sudokuRow;
+typedef std::vector<sudokuRow> sudokuVector;
 
 struct coord {
 	int x, y;
 	coord(int x, int y) {}
-	coord();
+
+	bool operator!=(const coord& other) const {
+		return x != other.x || y != other.y;
+	}
+
 };
 class cell {
 	coord x; //coordinates of the cell;
@@ -17,9 +27,9 @@ public:
 		if (!num)
 			safe = true;
 	}
-	cell() {
-
-	}
+	
+	cell():x(coord(0,0)),num(0),back(nullptr) {}
+	
 	coord GetLocation() {
 		return x;
 	}
@@ -37,13 +47,15 @@ public:
 		num++;
 	}
 
-	bool operator== (const int& x) const {
-		return num == x;
+	bool operator== (const cell& other) const {
+		return other.num == num;
 	}
+
+	~cell() {}
 
 };
 
-bool CheckColumn(cell Grid[][n], coord x);
-bool CheckRow(cell Grid[][n], coord x);
-bool checkSubGrid(cell Grid[][n], coord x);
-cell init(int grid[][n]);
+bool CheckColumn(sudokuVector Grid, coord c);
+bool CheckRow(sudokuVector Grid, coord c);
+bool checkSubGrid(sudokuVector Grid, coord c);
+sudokuVector init(int grid[][9]);
