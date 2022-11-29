@@ -18,20 +18,20 @@ struct coord {
 
 };
 class cell {
-	coord x; //coordinates of the cell;
+	coord c; //coordinates of the cell;
 	int num; // value of the cell
-	bool safe = false; //a safe values are the original values of the grid to not be edited
+	bool safe = false; //safe values are the original values of the grid to not be edited
 	cell* back = nullptr; //pointer to the previous cell for backtracking
 public:
-	cell(coord x, int num, cell* back) :x(x), num(num), back(back) {
+	cell(coord c, int num, cell* back) :c(c), num(num), back(back) {
 		if (!num)
 			safe = true;
 	}
 	
-	cell():x(coord(0,0)),num(0),back(nullptr) {}
+	cell():c(coord(0,0)),num(0),back(nullptr) {}
 	
 	coord GetLocation() {
-		return x;
+		return c;
 	}
 
 	int GetNum() {
@@ -44,7 +44,10 @@ public:
 		return back;
 	}
 	void Increment() {
-		num++;
+		if (num == 9)
+			num = 0;
+		else
+			num++;
 	}
 
 	bool operator== (const cell& other) const {
@@ -55,7 +58,9 @@ public:
 
 };
 
-bool CheckColumn(sudokuVector Grid, coord c);
-bool CheckRow(sudokuVector Grid, coord c);
-bool checkSubGrid(sudokuVector Grid, coord c);
+bool CheckColumn(sudokuVector& Grid, coord& c);
+bool CheckRow(sudokuVector& Grid, coord& c);
+bool CheckSubGrid(sudokuVector& Grid, coord& c);
+bool CheckConditions(sudokuVector& Grid, coord& c);
 sudokuVector init(int grid[][9]);
+void solve(sudokuVector& grid);

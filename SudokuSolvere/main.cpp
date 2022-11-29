@@ -1,6 +1,6 @@
 #include "Header.h"
 
-bool checkSubGrid(sudokuVector Grid, coord c) {
+bool CheckSubGrid(sudokuVector& Grid, coord& c) {
 
 	int xStart = c.x/3, yStart = c.y/3;
 	for (int i = xStart; i < xStart + 3; i++) {
@@ -12,7 +12,7 @@ bool checkSubGrid(sudokuVector Grid, coord c) {
 	return true;
 }
 
-bool CheckRow(sudokuVector Grid, coord c) {
+bool CheckRow(sudokuVector& Grid, coord& c) {
 	for (int i = 0; i < n; i++) {
 		if (Grid[c.x][i] == Grid[c.x][c.y] && c!= coord(c.x,i)) {
 			return false;
@@ -22,7 +22,7 @@ bool CheckRow(sudokuVector Grid, coord c) {
 }
 
 
-bool CheckColumn(sudokuVector Grid, coord c) {
+bool CheckColumn(sudokuVector& Grid, coord& c) {
 	for (int i = 0; i < n; i++) {
 		if (Grid[i][c.y] == Grid[c.x][c.y] && c!=coord(i,c.y)) {
 			return false;
@@ -52,6 +52,42 @@ sudokuVector init(int grid[][9]) {
 	return result;
 }
 
+bool CheckConditions(sudokuVector& Grid, coord& c) {
+	return CheckColumn(Grid, c) && CheckRow(Grid, c) && CheckSubGrid(Grid, c);
+}
+
+void solve(sudokuVector& grid) {
+	coord i(0,0);
+	for (; i.x < n; i.x++)
+	{
+		for (; i.y < n; i.y++) {
+			if (grid[i.x][i.y].isSafe())
+				break;
+
+			do {
+				grid[i.x][i.y].Increment();
+			} while (!CheckConditions(grid,i) && grid[i.x][i.y].GetNum()!= 9);
+
+			if (grid[i.x][i.y].GetNum() != 9)
+				break;
+			//grid[i.x][i.y].Increment();
+			cell* back = grid[i.x][i.y].GoBack();
+			i = back->GetLocation();
+			break;
+
+
+			/*
+			grid[i.x][i.y].Increment();
+			if (CheckConditions(grid, i))
+				break;
+
+			do {
+				grid[i.x][i.y].Increment();
+			} while (!CheckConditions(grid, i) && grid[i.x][i.y].GetNum() != 9);
+				grid[i.x][i.y].Increment();*/
+		}
+	}
+}
 
 
 int main() {
