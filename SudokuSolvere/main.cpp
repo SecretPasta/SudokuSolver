@@ -37,16 +37,18 @@ sudokuVector init(int grid[][9]) {
 
 	sudokuVector result = sudokuVector();
 	cell* backptr = nullptr;
+	coord back(0, 0);
 
 	for (int i = 0; i < n; i++) {
 		result.push_back(sudokuRow());
 		for (int j = 0; j < n; j++) {
-			if (grid[i][j]) {
-				result[i].push_back(cell(coord(i, j), grid[i][j], backptr));
+			if (grid[i][j] == 0) {
+				result[i].push_back(cell(coord(i, j), grid[i][j], back));
 				backptr = &result[i][j];
+				back = coord(i, j);
 			}
 			else
-				result[i].push_back(cell(coord(i, j), grid[i][j], nullptr));
+				result[i].push_back(cell(coord(i, j), grid[i][j], coord(-1,-1)));
 		}
 	}
 	return result;
@@ -61,19 +63,21 @@ void solve(sudokuVector& grid) {
 	for (; i.x < n; i.x++)
 	{
 		for (; i.y < n; i.y++) {
-			if (grid[i.x][i.y].isSafe())
-				break;
+			std::cout << "(" << i.x << "," << i.y << ")\n";
+			PrintGrid(grid);
+			if (grid[i.x][i.y].IsSafe())
+				continue;
 
 			do {
 				grid[i.x][i.y].Increment();
 			} while (!CheckConditions(grid,i) && grid[i.x][i.y].GetNum()!= 9);
 
-			if (grid[i.x][i.y].GetNum() != 9)
-				break;
-			//grid[i.x][i.y].Increment();
-			cell* back = grid[i.x][i.y].GoBack();
-			i = back->GetLocation();
-			break;
+			if (CheckConditions(grid,i))
+				continue;
+			grid[i.x][i.y].Increment(); // Incrementing past 9 will reset the cell to 0
+			//cell* back = grid[i.x][i.y].GoBack();
+			i = grid[i.x][i.y].goBack();
+			continue;
 
 
 			/*
@@ -87,11 +91,25 @@ void solve(sudokuVector& grid) {
 				grid[i.x][i.y].Increment();*/
 		}
 	}
+
 }
 
+void PrintGrid(sudokuVector& grid) {
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			std::cout << grid[i][j].GetNum() << " ";
+		}
+		std::cout << "\n";
+	}
+}
 
 int main() {
-	int InputArray[n][n];
+	int InputArray[n][n] = { {0,0,3,0,2,0,6,0,0},{9,0,0,3,0,5,0,0,1},{0,0,1,8,0,6,4,0,0},{0,0,8,1,0,2,9,0,0},{7,0,0,0,0,0,0,0,8},{0,0,6,7,0,8,2,0,0},{0,0,2,6,0,9,5,0,0
+}, {8,0,0,2,0,3,0,0,9},{0,0,5,0,1,0,3,0,0} };
 	sudokuVector Grid = init(InputArray);
-
+	std::cout << "Inital Array:\n";
+	PrintGrid(Grid);
+	solve(Grid);
+	std::cout << "\nSolved Array:\n";
+	PrintGrid(Grid);
 }
