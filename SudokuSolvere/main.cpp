@@ -1,8 +1,27 @@
 #include "Header.h"
+#include <chrono>
+
+class SimpleTimer
+{
+public:
+	SimpleTimer()
+	{
+		start = std::chrono::high_resolution_clock::now();
+	}
+	~SimpleTimer()
+	{
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "\n\nElapsed time:\t " << ((std::chrono::duration<double>)(end - start)).count() << " seconds\n";
+	}
+
+
+private:
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
+};
 
 bool CheckSubGrid(sudokuVector& Grid, coord& c) {
 
-	int xStart = c.x/3, yStart = c.y/3;
+	int xStart = (c.x / 3) * 3, yStart = (c.y / 3) * 3;
 	for (int i = xStart; i < xStart + 3; i++) {
 		for (int j = yStart; j < yStart + 3; j++) {
 			if (Grid[c.x][c.y] == Grid[i][j] && c!=coord(i,j) )
@@ -59,37 +78,41 @@ bool CheckConditions(sudokuVector& Grid, coord& c) {
 }
 
 void solve(sudokuVector& grid) {
-	coord i(0,0);
-	for (; i.x < n; i.x++)
+	for (coord currentCoord(0, 0); currentCoord.x < n;)
 	{
-		for (; i.y < n; i.y++) {
-			std::cout << "(" << i.x << "," << i.y << ")\n";
-			PrintGrid(grid);
-			if (grid[i.x][i.y].IsSafe())
-				continue;
+		//std::cout << "(" << currentCoord.x << "," << currentCoord.y << ")\n";
 
-			do {
-				grid[i.x][i.y].Increment();
-			} while (!CheckConditions(grid,i) && grid[i.x][i.y].GetNum()!= 9);
 
-			if (CheckConditions(grid,i))
-				continue;
-			grid[i.x][i.y].Increment(); // Incrementing past 9 will reset the cell to 0
-			//cell* back = grid[i.x][i.y].GoBack();
-			i = grid[i.x][i.y].goBack();
+		if (grid[currentCoord.x][currentCoord.y].IsSafe())
+		{
+			currentCoord++;
+			//std::cout << "Is save!\n";
 			continue;
-
-
-			/*
-			grid[i.x][i.y].Increment();
-			if (CheckConditions(grid, i))
-				break;
-
-			do {
-				grid[i.x][i.y].Increment();
-			} while (!CheckConditions(grid, i) && grid[i.x][i.y].GetNum() != 9);
-				grid[i.x][i.y].Increment();*/
 		}
+		//PrintGrid(grid);
+		while (grid[currentCoord.x][currentCoord.y].Increment())
+		{
+			if (CheckConditions(grid, currentCoord))
+				break;
+		}
+		//grid[currentCoord.x][currentCoord.y].Increment(); // Incrementing past 9 will reset the cell to 0
+		//cell* back = grid[i.x][i.y].GoBack();
+		if (!CheckConditions(grid, currentCoord))
+		{
+			currentCoord = grid[currentCoord.x][currentCoord.y].goBack();
+			continue;
+		}
+		currentCoord++;
+		//std::cin.get();
+		/*
+		grid[i.x][i.y].Increment();
+		if (CheckConditions(grid, i))
+			break;
+
+		do {
+			grid[i.x][i.y].Increment();
+		} while (!CheckConditions(grid, i) && grid[i.x][i.y].GetNum() != 9);
+			grid[i.x][i.y].Increment();*/
 	}
 
 }
@@ -98,18 +121,35 @@ void PrintGrid(sudokuVector& grid) {
 	for (int i = 0; i < n; i++) {
 		for (int j = 0; j < n; j++) {
 			std::cout << grid[i][j].GetNum() << " ";
+			if (j % 3 == 2)
+				std::cout << '|';
 		}
-		std::cout << "\n";
+		if (i % 3 == 2)
+			std::cout << "\n---------------------\n";
+		else
+			std::cout << "\n";
 	}
 }
 
 int main() {
-	int InputArray[n][n] = { {0,0,3,0,2,0,6,0,0},{9,0,0,3,0,5,0,0,1},{0,0,1,8,0,6,4,0,0},{0,0,8,1,0,2,9,0,0},{7,0,0,0,0,0,0,0,8},{0,0,6,7,0,8,2,0,0},{0,0,2,6,0,9,5,0,0
-}, {8,0,0,2,0,3,0,0,9},{0,0,5,0,1,0,3,0,0} };
+	
+	int InputArray[n][n] = { 
+		{0,0,3,0,2,0,6,0,0},
+		{9,0,0,3,0,5,0,0,1},
+		{0,0,1,8,0,6,4,0,0},
+		{0,0,8,1,0,2,9,0,0},
+		{7,0,0,0,0,0,0,0,8},
+		{0,0,6,7,0,8,2,0,0},
+		{0,0,2,6,0,9,5,0,0},
+		{8,0,0,2,0,3,0,0,9},
+		{0,0,5,0,1,0,3,0,0} };
 	sudokuVector Grid = init(InputArray);
 	std::cout << "Inital Array:\n";
 	PrintGrid(Grid);
-	solve(Grid);
+	{
+		SimpleTimer simpleTimer;
+		solve(Grid);
+	}
 	std::cout << "\nSolved Array:\n";
 	PrintGrid(Grid);
 }

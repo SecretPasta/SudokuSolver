@@ -13,6 +13,16 @@ struct coord {
 	bool operator!=(const coord& other) const {
 		return x != other.x || y != other.y;
 	}
+	const coord& operator++(int) {
+		coord result = *this;
+		y++;
+		if (y >= n)
+		{
+			y = 0;
+			x++;
+		}
+		return result;
+	}
 
 };
 class cell {
@@ -50,11 +60,14 @@ public:
 	/*cell* GoBack() {
 		return back;
 	}*/
-	void Increment() {
+	bool Increment() {
 		if (num == 9)
+		{
 			num = 0;
-		else
-			num++;
+			return false;
+		}
+		num++;
+		return true;
 	}
 
 	bool operator== (const cell& other) const {
