@@ -3,21 +3,21 @@
 
 
 
-bool CheckSubGrid(sudokuVector& Grid, coord& c) {
+bool CheckSubGrid(sudokuVector& Grid, Coord& c) {
 
 	int xStart = (c.x / 3) * 3, yStart = (c.y / 3) * 3;
 	for (int i = xStart; i < xStart + 3; i++) {
 		for (int j = yStart; j < yStart + 3; j++) {
-			if (Grid[c.x][c.y] == Grid[i][j] && c!=coord(i,j) )
+			if (Grid[c.x][c.y] == Grid[i][j] && c!=Coord(i,j) )
 				return false;
 		}
 	}
 	return true;
 }
 
-bool CheckRow(sudokuVector& Grid, coord& c) {
+bool CheckRow(sudokuVector& Grid, Coord& c) {
 	for (int i = 0; i < n; i++) {
-		if (Grid[c.x][i] == Grid[c.x][c.y] && c!= coord(c.x,i)) {
+		if (Grid[c.x][i] == Grid[c.x][c.y] && c!= Coord(c.x,i)) {
 			return false;
 		}
 	}
@@ -25,9 +25,9 @@ bool CheckRow(sudokuVector& Grid, coord& c) {
 }
 
 
-bool CheckColumn(sudokuVector& Grid, coord& c) {
+bool CheckColumn(sudokuVector& Grid, Coord& c) {
 	for (int i = 0; i < n; i++) {
-		if (Grid[i][c.y] == Grid[c.x][c.y] && c!=coord(i,c.y)) {
+		if (Grid[i][c.y] == Grid[c.x][c.y] && c!=Coord(i,c.y)) {
 			return false;
 		}
 	}
@@ -39,27 +39,27 @@ bool CheckColumn(sudokuVector& Grid, coord& c) {
 sudokuVector init(int grid[][9]) {
 
 	sudokuVector result = sudokuVector();
-	coord back(0, 0);
+	Coord back(0, 0);
 	for (int i = 0; i < n; i++) {
 		result.push_back(sudokuRow());
 		for (int j = 0; j < n; j++) {
 			if (grid[i][j] == 0) {
-				result[i].push_back(cell(coord(i, j), grid[i][j], back));
-				back = coord(i, j);
+				result[i].push_back(Cell(Coord(i, j), grid[i][j], back));
+				back = Coord(i, j);
 			}
 			else
-				result[i].push_back(cell(coord(i, j), grid[i][j], coord(-1,-1)));
+				result[i].push_back(Cell(Coord(i, j), grid[i][j], Coord(-1,-1)));
 		}
 	}
 	return result;
 }
 
-bool CheckConditions(sudokuVector& Grid, coord& c) {
+bool CheckConditions(sudokuVector& Grid, Coord& c) {
 	return CheckColumn(Grid, c) && CheckRow(Grid, c) && CheckSubGrid(Grid, c);
 }
 
 void solve(sudokuVector& grid) {
-	for (coord currentCoord(0, 0); currentCoord.x < n;)
+	for (Coord currentCoord(0, 0); currentCoord.x < n;)
 	{
 		if (grid[currentCoord.x][currentCoord.y].IsSafe())
 		{
@@ -73,7 +73,7 @@ void solve(sudokuVector& grid) {
 		}
 		if (!CheckConditions(grid, currentCoord))
 		{
-			currentCoord = grid[currentCoord.x][currentCoord.y].goBack();
+			currentCoord = grid[currentCoord.x][currentCoord.y].GoBack();
 			continue;
 		}
 		currentCoord++;
@@ -96,7 +96,21 @@ void PrintGrid(sudokuVector& grid) {
 }
 
 int main() {
-	
+	std::string myString;
+	std::ifstream Read1;
+	Read1.open("Grids.txt");
+	if (!Read1.is_open()) {
+		exit(1);
+	}
+
+	// Reading from file-------------------------- Work in Progress
+	char line[10];
+	Read1 >> line;
+	while (Read1.good()) {
+		std::cout << line << "\n";
+		Read1 >> line;
+	}
+	//----------------------------------------------
 	int InputArray[n][n] = { 
 		{0,0,3,0,2,0,6,0,0},
 		{9,0,0,3,0,5,0,0,1},
@@ -108,12 +122,12 @@ int main() {
 		{8,0,0,2,0,3,0,0,9},
 		{0,0,5,0,1,0,3,0,0} };
 	sudokuVector Grid = init(InputArray);
-	std::cout << "Inital Array:\n";
-	PrintGrid(Grid);
+//	std::cout << "Inital Array:\n";
+//	PrintGrid(Grid);
 	{
 		SimpleTimer simpleTimer;
 		solve(Grid);
 	}
-	std::cout << "\nSolved Array:\n";
-	PrintGrid(Grid);
+//	std::cout << "\nSolved Array:\n";
+//	PrintGrid(Grid);
 }

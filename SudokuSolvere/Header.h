@@ -3,19 +3,21 @@
 #include <iostream>
 #include <vector>
 #include <chrono>
+#include <fstream>
+#include <cstdlib>
 
 #define n 9
 
 
-struct coord {
+struct Coord {
 	int x, y;
-	coord(int x, int y): x(x),y(y){}
+	Coord(int x, int y): x(x),y(y){}
 
-	bool operator!=(const coord& other) const {
+	bool operator!=(const Coord& other) const {
 		return x != other.x || y != other.y;
 	}
-	const coord& operator++(int) {
-		coord result = *this;
+	const Coord& operator++(int) {
+		Coord result = *this;
 		y++;
 		if (y >= n)
 		{
@@ -26,31 +28,31 @@ struct coord {
 	}
 
 };
-class cell {
-	coord c; //coordinates of the cell;
-	coord Back;
+class Cell {
+	Coord c; //coordinates of the cell;
+	Coord Back; // Coordinates of the previous cell for backtracking
 	int num; // value of the cell
 	bool safe = false; //safe values are the original values of the grid to not be edited
 public:
 
-	cell(coord c, int num, coord Back) :c(c), num(num), Back(Back) {
+	Cell(Coord c, int num, Coord Back) :c(c), num(num), Back(Back) {
 		if (num != 0)
 			safe = true;
 	}
 	
-	cell():c(coord(0,0)),num(0),Back(coord(0,0)) {}
+	Cell():c(Coord(0,0)),num(0),Back(Coord(0,0)) {}
 	
-	coord GetLocation() {
+	Coord GetLocation() { 
 		return c;
 	}
 
-	int GetNum() {
+	int GetNum() { 
 		return num;
 	}
-	bool IsSafe() {
+	bool IsSafe() { 
 		return safe;
 	}
-	coord goBack() {
+	Coord GoBack() {
 		return Back;
 	}
 
@@ -64,14 +66,14 @@ public:
 		return true;
 	}
 
-	bool operator== (const cell& other) const {
+	bool operator== (const Cell& other) const {
 		return other.num == num;
 	}
 
 
 };
 
-class SimpleTimer
+class SimpleTimer // class for benchmarking
 {
 public:
 	SimpleTimer()
@@ -89,13 +91,13 @@ private:
 	std::chrono::time_point<std::chrono::steady_clock> start, end;
 };
 
-typedef std::vector<cell> sudokuRow;
+typedef std::vector<Cell> sudokuRow;
 typedef std::vector<sudokuRow> sudokuVector;
 
-bool CheckColumn(sudokuVector& Grid, coord& c);
-bool CheckRow(sudokuVector& Grid, coord& c);
-bool CheckSubGrid(sudokuVector& Grid, coord& c);
-bool CheckConditions(sudokuVector& Grid, coord& c);
+bool CheckColumn(sudokuVector& Grid, Coord& c);
+bool CheckRow(sudokuVector& Grid, Coord& c);
+bool CheckSubGrid(sudokuVector& Grid, Coord& c);
+bool CheckConditions(sudokuVector& Grid, Coord& c);
 sudokuVector init(int grid[][9]);
 void solve(sudokuVector& grid);
 void PrintGrid(sudokuVector& grid);
