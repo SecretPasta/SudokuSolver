@@ -1,7 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include<vector>
+#include <vector>
+#include <chrono>
 
 #define n 9
 
@@ -30,12 +31,7 @@ class cell {
 	coord Back;
 	int num; // value of the cell
 	bool safe = false; //safe values are the original values of the grid to not be edited
-	//cell* back = nullptr; //pointer to the previous cell for backtracking
 public:
-	/*cell(coord c, int num, cell* back) :c(c), num(num), back(back) {
-		if (num != 0)
-			safe = true;
-	}*/
 
 	cell(coord c, int num, coord Back) :c(c), num(num), Back(Back) {
 		if (num != 0)
@@ -57,9 +53,7 @@ public:
 	coord goBack() {
 		return Back;
 	}
-	/*cell* GoBack() {
-		return back;
-	}*/
+
 	bool Increment() {
 		if (num == 9)
 		{
@@ -74,8 +68,25 @@ public:
 		return other.num == num;
 	}
 
-	~cell() {}
 
+};
+
+class SimpleTimer
+{
+public:
+	SimpleTimer()
+	{
+		start = std::chrono::high_resolution_clock::now();
+	}
+	~SimpleTimer()
+	{
+		end = std::chrono::high_resolution_clock::now();
+		std::cout << "\n\nElapsed time:\t " << ((std::chrono::duration<double>)(end - start)).count() << " seconds\n";
+	}
+
+
+private:
+	std::chrono::time_point<std::chrono::steady_clock> start, end;
 };
 
 typedef std::vector<cell> sudokuRow;

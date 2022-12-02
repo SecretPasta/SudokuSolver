@@ -1,23 +1,7 @@
 #include "Header.h"
-#include <chrono>
-
-class SimpleTimer
-{
-public:
-	SimpleTimer()
-	{
-		start = std::chrono::high_resolution_clock::now();
-	}
-	~SimpleTimer()
-	{
-		end = std::chrono::high_resolution_clock::now();
-		std::cout << "\n\nElapsed time:\t " << ((std::chrono::duration<double>)(end - start)).count() << " seconds\n";
-	}
 
 
-private:
-	std::chrono::time_point<std::chrono::steady_clock> start, end;
-};
+
 
 bool CheckSubGrid(sudokuVector& Grid, coord& c) {
 
@@ -55,15 +39,12 @@ bool CheckColumn(sudokuVector& Grid, coord& c) {
 sudokuVector init(int grid[][9]) {
 
 	sudokuVector result = sudokuVector();
-	cell* backptr = nullptr;
 	coord back(0, 0);
-
 	for (int i = 0; i < n; i++) {
 		result.push_back(sudokuRow());
 		for (int j = 0; j < n; j++) {
 			if (grid[i][j] == 0) {
 				result[i].push_back(cell(coord(i, j), grid[i][j], back));
-				backptr = &result[i][j];
 				back = coord(i, j);
 			}
 			else
@@ -80,39 +61,22 @@ bool CheckConditions(sudokuVector& Grid, coord& c) {
 void solve(sudokuVector& grid) {
 	for (coord currentCoord(0, 0); currentCoord.x < n;)
 	{
-		//std::cout << "(" << currentCoord.x << "," << currentCoord.y << ")\n";
-
-
 		if (grid[currentCoord.x][currentCoord.y].IsSafe())
 		{
 			currentCoord++;
-			//std::cout << "Is save!\n";
 			continue;
 		}
-		//PrintGrid(grid);
 		while (grid[currentCoord.x][currentCoord.y].Increment())
 		{
 			if (CheckConditions(grid, currentCoord))
 				break;
 		}
-		//grid[currentCoord.x][currentCoord.y].Increment(); // Incrementing past 9 will reset the cell to 0
-		//cell* back = grid[i.x][i.y].GoBack();
 		if (!CheckConditions(grid, currentCoord))
 		{
 			currentCoord = grid[currentCoord.x][currentCoord.y].goBack();
 			continue;
 		}
 		currentCoord++;
-		//std::cin.get();
-		/*
-		grid[i.x][i.y].Increment();
-		if (CheckConditions(grid, i))
-			break;
-
-		do {
-			grid[i.x][i.y].Increment();
-		} while (!CheckConditions(grid, i) && grid[i.x][i.y].GetNum() != 9);
-			grid[i.x][i.y].Increment();*/
 	}
 
 }
