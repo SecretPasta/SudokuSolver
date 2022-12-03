@@ -95,39 +95,78 @@ void PrintGrid(sudokuVector& grid) {
 	}
 }
 
+int CtoI(char x) {
+	switch (x) {
+	case '9':
+		return 9;
+	case '8':
+		return 8;
+	case '7':
+		return 7;
+	case '6':
+		return 6;
+	case '5':
+		return 5;
+	case '4':
+		return 4;
+	case '3':
+		return 3;
+	case '2':
+		return 2;
+	case '1':
+		return 1;
+	case '0':
+		return 0;
+	default :
+		return -1;
+
+
+	}
+}
+
+
 int main() {
-	std::string myString;
-	std::ifstream Read1;
-	Read1.open("Grids.txt");
-	if (!Read1.is_open()) {
+	std::ifstream file;
+	std::string MyRow;
+	int sum = 0;
+	int total = 0;
+	int Grids[50][n][n] = {};
+	int s = 0;
+	// Reading from file to create a Tensor of Grids-------
+	file.open("Grids.txt");
+	if (!file.is_open()) {
 		exit(1);
 	}
-
-	// Reading from file-------------------------- Work in Progress
-	char line[10];
-	Read1 >> line;
-	while (Read1.good()) {
-		std::cout << line << "\n";
-		Read1 >> line;
+	while (file.good()) {
+		file >> MyRow;
+		file >> MyRow;
+		for (int i = 0; i < n; i++) {
+			file >> MyRow;
+			for (int j = 0; j < n; j++) {
+				char z = MyRow[j];
+				Grids[s][i][j] = CtoI(z);
+			}
+		}
 	}
-	//----------------------------------------------
-	int InputArray[n][n] = { 
-		{0,0,3,0,2,0,6,0,0},
-		{9,0,0,3,0,5,0,0,1},
-		{0,0,1,8,0,6,4,0,0},
-		{0,0,8,1,0,2,9,0,0},
-		{7,0,0,0,0,0,0,0,8},
-		{0,0,6,7,0,8,2,0,0},
-		{0,0,2,6,0,9,5,0,0},
-		{8,0,0,2,0,3,0,0,9},
-		{0,0,5,0,1,0,3,0,0} };
-	sudokuVector Grid = init(InputArray);
-//	std::cout << "Inital Array:\n";
-//	PrintGrid(Grid);
+	//----------------------------------------------------
+
+	// Solving 50 Grids with a timer
 	{
 		SimpleTimer simpleTimer;
-		solve(Grid);
+		for (int g = 0; g < 50; g++) {
+			sudokuVector MyGrid = init(Grids[g]);
+			{
+				SimpleTimer simpleTimer;
+				solve(MyGrid);
+//				PrintGrid(MyGrid);
+				sum = (MyGrid[0][0].GetNum() + MyGrid[0][1].GetNum() + MyGrid[0][2].GetNum());
+				std::cout << "Grid Number " << g+1 << ":\t ";
+			}
+			std::cout << "\tSum is: " << sum << "\n";
+			total += sum;
+		}
+		std::cout << "Total ";
 	}
-//	std::cout << "\nSolved Array:\n";
-//	PrintGrid(Grid);
+	std::cout << "\tTotal is: " << total;
+	
 }

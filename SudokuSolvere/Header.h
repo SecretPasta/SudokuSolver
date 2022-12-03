@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 #include <vector>
 #include <chrono>
 #include <fstream>
@@ -83,7 +84,7 @@ public:
 	~SimpleTimer()
 	{
 		end = std::chrono::high_resolution_clock::now();
-		std::cout << "\n\nElapsed time:\t " << ((std::chrono::duration<double>)(end - start)).count() << " seconds\n";
+		std::cout << "Elapsed time:\t " << ((std::chrono::duration<double>)(end - start)).count() << " seconds";
 	}
 
 
@@ -101,3 +102,4 @@ bool CheckConditions(sudokuVector& Grid, Coord& c);
 sudokuVector init(int grid[][9]);
 void solve(sudokuVector& grid);
 void PrintGrid(sudokuVector& grid);
+int CtoI(char x);
