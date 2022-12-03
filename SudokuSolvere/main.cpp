@@ -1,8 +1,6 @@
 #include "Header.h"
 
 
-
-
 bool CheckSubGrid(sudokuVector& Grid, Coord& c) {
 
 	int xStart = (c.x / 3) * 3, yStart = (c.y / 3) * 3;
@@ -14,6 +12,7 @@ bool CheckSubGrid(sudokuVector& Grid, Coord& c) {
 	}
 	return true;
 }
+
 
 bool CheckRow(sudokuVector& Grid, Coord& c) {
 	for (int i = 0; i < n; i++) {
@@ -35,7 +34,6 @@ bool CheckColumn(sudokuVector& Grid, Coord& c) {
 }
 
 
-
 sudokuVector init(int grid[][9]) {
 
 	sudokuVector result = sudokuVector();
@@ -54,9 +52,11 @@ sudokuVector init(int grid[][9]) {
 	return result;
 }
 
+
 bool CheckConditions(sudokuVector& Grid, Coord& c) {
 	return CheckColumn(Grid, c) && CheckRow(Grid, c) && CheckSubGrid(Grid, c);
 }
+
 
 void solve(sudokuVector& grid) {
 	for (Coord currentCoord(0, 0); currentCoord.x < n;)
@@ -71,7 +71,7 @@ void solve(sudokuVector& grid) {
 			if (CheckConditions(grid, currentCoord))
 				break;
 		}
-		if (!CheckConditions(grid, currentCoord))
+		if (grid[currentCoord.x][currentCoord.y].GetNum() == 0)
 		{
 			currentCoord = grid[currentCoord.x][currentCoord.y].GoBack();
 			continue;
@@ -80,6 +80,7 @@ void solve(sudokuVector& grid) {
 	}
 
 }
+
 
 void PrintGrid(sudokuVector& grid) {
 	for (int i = 0; i < n; i++) {
@@ -95,31 +96,9 @@ void PrintGrid(sudokuVector& grid) {
 	}
 }
 
+
 int CtoI(const char& x) {
-	switch (x) {
-	case '9':
-		return 9;
-	case '8':
-		return 8;
-	case '7':
-		return 7;
-	case '6':
-		return 6;
-	case '5':
-		return 5;
-	case '4':
-		return 4;
-	case '3':
-		return 3;
-	case '2':
-		return 2;
-	case '1':
-		return 1;
-	case '0':
-		return 0;
-	default :
-		return -1;
-	}
+	return x - '0';
 }
 
 
@@ -154,10 +133,13 @@ int main() {
 		SimpleTimer simpleTimer;
 		for (int g = 0; g < 50; g++) {
 			sudokuVector MyGrid = init(Grids[g]);
+			
 			{
 				SimpleTimer simpleTimer;
+				//PrintGrid(MyGrid);
 				solve(MyGrid);
-				sum = (MyGrid[0][0].GetNum() + MyGrid[0][1].GetNum() + MyGrid[0][2].GetNum());
+				//PrintGrid(MyGrid);
+				sum = (MyGrid[0][0].GetNum()*100 + MyGrid[0][1].GetNum()*10 + MyGrid[0][2].GetNum());
 				std::cout << "Grid Number " << g+1 << ":\t ";
 			}
 			std::cout << "\tSum is: " << sum << "\n"; //Sum of 3 numbers
