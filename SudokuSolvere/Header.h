@@ -102,4 +102,4 @@ bool CheckConditions(sudokuVector& Grid, Coord& c);
 sudokuVector init(int grid[][9]);
 void solve(sudokuVector& grid);
 void PrintGrid(sudokuVector& grid);
-int CtoI(char x);
+int CtoI(const char& x);

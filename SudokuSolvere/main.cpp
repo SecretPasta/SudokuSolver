@@ -95,7 +95,7 @@ void PrintGrid(sudokuVector& grid) {
 	}
 }
 
-int CtoI(char x) {
+int CtoI(const char& x) {
 	switch (x) {
 	case '9':
 		return 9;
@@ -119,8 +119,6 @@ int CtoI(char x) {
 		return 0;
 	default :
 		return -1;
-
-
 	}
 }
 
@@ -138,8 +136,8 @@ int main() {
 		exit(1);
 	}
 	while (file.good()) {
-		file >> MyRow;
-		file >> MyRow;
+		file >> MyRow; //Skipping the Word "Grid"
+		file >> MyRow; // Skipping the number of the Grid
 		for (int i = 0; i < n; i++) {
 			file >> MyRow;
 			for (int j = 0; j < n; j++) {
@@ -147,6 +145,7 @@ int main() {
 				Grids[s][i][j] = CtoI(z);
 			}
 		}
+		s++;
 	}
 	//----------------------------------------------------
 
@@ -158,15 +157,14 @@ int main() {
 			{
 				SimpleTimer simpleTimer;
 				solve(MyGrid);
-//				PrintGrid(MyGrid);
 				sum = (MyGrid[0][0].GetNum() + MyGrid[0][1].GetNum() + MyGrid[0][2].GetNum());
 				std::cout << "Grid Number " << g+1 << ":\t ";
 			}
-			std::cout << "\tSum is: " << sum << "\n";
+			std::cout << "\tSum is: " << sum << "\n"; //Sum of 3 numbers
 			total += sum;
 		}
-		std::cout << "Total ";
+		std::cout << "Total "; // Total Time Elapsed 
 	}
-	std::cout << "\tTotal is: " << total;
+	std::cout << "\tTotal is: " << total; // Total of first 3 digits
 	
 }
